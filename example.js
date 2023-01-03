@@ -1,7 +1,5 @@
 /* global $, JitsiMeetJS */
 
-JitsiMeetJS.init();
-
 const options = {
     hosts: {
         domain: "meet.jit.si",
@@ -17,14 +15,6 @@ let room = null;
 let localTracks = [];
 const remoteTracks = {};
 
-// Start connection
-connection = new JitsiMeetJS.JitsiConnection(null, null, options);
-
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
-
-connection.connect();
 
 /**
  * Handles local tracks.
