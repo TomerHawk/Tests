@@ -2,14 +2,36 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Banana Joe</title>
+    <title>BANANA LALALALA</title>
     <script src='https://<your-domain>/external_api.js'></script>
-    <script src="example.js" ></script>
+    <!--script src="example.js" ></script-->
 </head>
 <body>
     <p>Icke bins</p>
-    <img src="https://www.terencebud.de/media/image/22/1b/7e/banana-joe-542e550247081rc72mWCEXIEYv_1280x1280.png">
     <!-- <video id="localVideo" autoplay="true"></video> -->
     <!--<audio id="localAudio" autoplay="true" muted="true"></audio>-->
+    <script>
+    const domain = 'meet.jit.si';
+    const options = {
+        roomName: 'TilUndTomer',
+        width: 700,
+        height: 700,
+        parentNode: document.querySelector('#meet'),
+        lang: 'de',
+        moderator: true,
+        userInfo: {
+            displayName: 'Banana Joe'
+        }
+    };
+    const api = new JitsiMeetExternalAPI(domain, options);
+    api.addListener(incomingMessage, receiveMessage);
+
+    // print message to console
+    function receiveMessage(data) {
+        console.log("Here is my data: " + data.nick);
+    }
+
+
+    </script>
 </body>
 </html>
