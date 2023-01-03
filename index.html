@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>BOBSASF</title>
+    <title>BANANA TOMER</title>
     <script src='https://meet.jit.si/external_api.js'></script>
      <!--script src="example.js" ></script-->
 </head>
@@ -24,11 +24,23 @@
         }
     };
     const api = new JitsiMeetExternalAPI(domain, options);
-    api.addListener(incomingMessage, receiveMessage);
+    api.addListener('incomingMessage', receiveMessage);
+    // set new password for channel
+    api.addEventListener('participantRoleChanged', function(event) {
+    if (event.role === "moderator") {
+        api.executeCommand('password', 'Tomer');
+        console.log("Password set")
+    }
+    });
 
     // print message to console
     function receiveMessage(data) {
         console.log("Here is my data: " + data.nick);
+        api.executeCommand('sendChatMessage',
+    "Banana Joe!!!", //the text message
+    undefined, // the receiving participant ID or empty string/undefined for group chat.
+    true, // true if the privacy notification should be ignored. Defaulted to false.
+);
     }
 
 
