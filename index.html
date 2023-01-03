@@ -1,13 +1,44 @@
 <script src='https://meet.jit.si/external_api.js'></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://meet.jit.si/libs/lib-jitsi-meet.min.js"></script>
 <script>
 const domain = 'meet.jit.si';
 const options = {
-    roomName: 'Tunnelmeeting',
+    host: domain + "Tunnelmeeting",
+    /*roomName: 'Tunnelmeeting',
     width: 700,
     height: 700,
-    parentNode: document.querySelector('#meet')
+    parentNode: document.querySelector('#meet'),
+    // disable audio to not interfere from server side
+    configOverwrite: { startWithAudioMuted: true }*/
 };
+/*
 const api = new JitsiMeetExternalAPI(domain, options);
+console.log("WE STARTED");
+// Add event listener to react
+api.addListener(endpointTextMessageReceived, myListener);
 
+function myListener (messageData) {
+    console.log("WE RECEIVED " + messageData.eventData.text);
+}
+*/
+
+// Other try, start Jitsi
+JitsiMeetJS.init();
+var connection = new JitsiMeetJS.JitsiConnection(null, null, options);
+connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
+connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
+
+connection.connect();
+// create room
+room = connection.initJitsiConference('Tunnelmeeting', confOptions);
+room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
+room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
+
+JitsiMeetJS.createLocalTracks().then(onLocalTracks);
+room.join();
+JitsiMeetJS.sendTextMessage("HI ALL")
+JitsiMeetJS.setDisplayName("Server")  
 
 </script>
