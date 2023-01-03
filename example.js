@@ -1,12 +1,20 @@
 /* global $, JitsiMeetJS */
 
+JitsiMeetJS.init();
+
 const options = {
     hosts: {
-        domain: 'jitsi-meet.example.com',
-        muc: 'conference.jitsi-meet.example.com'
+        domain: "meet.jit.si",
     },
-    bosh: '//jitsi-meet.example.com/http-bind'
 };
+// Start connection
+var connection = new JitsiMeetJS.JitsiConnection(null, null, options);
+
+connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
+connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
+
+connection.connect();
 
 const confOptions = {
 };
@@ -124,7 +132,7 @@ function onUserLeft(id) {
  * That function is called when connection is established successfully
  */
 function onConnectionSuccess() {
-    room = connection.initJitsiConference('conference', confOptions);
+    room = connection.initJitsiConference('Tunnelmeeting', confOptions);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => {
         console.log(`track removed!!!${track}`);
