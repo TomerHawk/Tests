@@ -1,50 +1,102 @@
 <!DOCTYPE html>
-<html>
-<head lang="en">
+<html lang="en">
+
+<head>
     <meta charset="UTF-8">
-    <title>BANANA TOMER2</title>
-    <script src='https://meet.jit.si/external_api.js'></script>
-     <!--script src="example.js" ></script-->
-</head>
-<body>
-    <div id="meet"></div>
-    <p>Icke bins</p>
-    <!-- <video id="localVideo" autoplay="true"></video> -->
-    <!--<audio id="localAudio" autoplay="true" muted="true"></audio>-->
-    <script>
-    const domain = 'meet.jit.si';
-    const options = {
-        roomName: 'TilUndTomer',
-        width: 700,
-        height: 700,
-        parentNode: document.querySelector('#meet'),
-        lang: 'de',
-        moderator: true,
-        userInfo: {
-            displayName: 'Banana Joe'
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL2 Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
         }
-    };
-    const api = new JitsiMeetExternalAPI(domain, options);
-    api.addListener('incomingMessage', receiveMessage);
-    // set new password for channel
-    api.addEventListener('participantRoleChanged', function(event) {
-    if (event.role === "moderator") {
-        api.executeCommand('password', 'Tomer');
-        console.log("Password set")
-    }
-    });
 
-    // print message to console
-    function receiveMessage(data) {
-        console.log("Here is my data: " + data.nick);
-        api.executeCommand('sendChatMessage',
-    "Banana Joe!!!", //the text message
-    undefined, // the receiving participant ID or empty string/undefined for group chat.
-    true, // true if the privacy notification should be ignored. Defaulted to false.
-);
-    }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+            overflow: auto;
+        }
 
+        canvas {
+            display: block;
+            margin: 20px 0;
+        }
+    </style>
+</head>
 
+<body>
+    <h1>WebGL2 Report</h1>
+    <canvas id="glCanvas" width="256" height="256"></canvas>
+    <pre id="webgl-params"></pre>
+    <pre id="image-hash"></pre>
+
+    <script>
+        async function sha256(buffer) {
+            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        function getWebGL2Params(gl) {
+            const params = {
+                "Vendor": gl.getParameter(gl.VENDOR),
+                "Renderer": gl.getParameter(gl.RENDERER),
+                "Version": gl.getParameter(gl.VERSION),
+                "Shading Language Version": gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
+                "Max Vertex Attributes": gl.getParameter(gl.MAX_VERTEX_ATTRIBS),
+                "Max Vertex Uniform Vectors": gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS),
+                "Max Fragment Uniform Vectors": gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS),
+                "Max Texture Size": gl.getParameter(gl.MAX_TEXTURE_SIZE),
+                "Max Cube Map Texture Size": gl.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE),
+                "Max Combined Texture Image Units": gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS),
+                "Max Vertex Texture Image Units": gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS),
+                "Max Renderbuffer Size": gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)
+            };
+
+            return params;
+        }
+
+        function drawCanvas(gl) {
+            gl.clearColor(0.0, 0.5, 0.5, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // Additional drawing code can be added here
+        }
+
+        async function getCanvasHash(canvas) {
+            const dataURL = canvas.toDataURL();
+            const buffer = new TextEncoder().encode(dataURL);
+            const hash = await sha256(buffer);
+            return hash;
+        }
+
+        function displayParams(elementId, params) {
+            document.getElementById(elementId).textContent = JSON.stringify(params, null, 2);
+        }
+
+        function displayHash(elementId, hash) {
+            document.getElementById(elementId).textContent = hash;
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const canvas = document.getElementById('glCanvas');
+            const gl = canvas.getContext('webgl2');
+
+            if (!gl) {
+                document.getElementById('webgl-params').textContent = "WebGL2 not supported";
+                return;
+            }
+
+            drawCanvas(gl);
+
+            const params = getWebGL2Params(gl);
+            const hash = await getCanvasHash(canvas);
+            const params_with_hash = { ...params, "WebGL Image Hash": hash };
+            displayParams('webgl-params', params_with_hash);
+        });
     </script>
 </body>
+
 </html>
